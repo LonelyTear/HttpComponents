@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+	<!-- primitive原生态的URL请求 ,引入注解后,会以注解为主,此xml配置变得无效化,
+	也就是说删除掉  applicationContext.xml中的第1,2,3,4这4个beans才会有效-->
+	<bean id="handlerMapping"
+		class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<!-- 配置方法一 
+			<property name="urlMap">
+				<map> 
+				 	<entry key="/user/login.do" value-ref="loginController"/> 
+				</map> 
+			</property>
+		 -->
+		 
+		<!-- 此时urlMap.properties文件应放在WebRoot目录下! -->
+		<!-- 配置方法二 
+			<property name="mappings">
+				 <bean class="org.springframework.beans.factory.config.PropertiesFactoryBean"> 
+					<property name="location"> 
+						<value>urlMap.properties</value> 
+					</property>
+				</bean> 
+			</property>
+		 -->
+
+		<!-- 配置方法三 -->
+		<property name="mappings">
+			<props>
+				<!-- 如果单纯地只是这样,而不用Spring的UrlBasedViewResolver视图解析器, (applicationContext-common.xml的第5个bean)
+				那么使用SpringMVC/user/UserController.do去访问,在Controller层返回ModelAndView("listUsers.jsp"),
+				会默认跳转到SpringMVC/user/listUsers.jsp -->
+				<prop key="/user/UserController.do">UserController</prop>
+			</props>
+		</property>
+	</bean>
+
+
+	<bean id="UserController" class="com.bobo.code.web.controller.UserController">
+		<property name="userService" ref="UserService">		</property>
+	</bean>
+
+	<bean id="UserService" class="com.bobo.code.service.UserService">
+		<property name="userDAO" ref="userDAO">		</property>
+	</bean>
+
+	<!-- 定义DAO ，自己定义的类-->
+	<bean id="userDAO" class="com.bobo.code.dao.UserDAOImpl">
+		<property name="sqlMapClient" ref="sqlMapClient">		</property> 
+	</bean>
+
+</beans>

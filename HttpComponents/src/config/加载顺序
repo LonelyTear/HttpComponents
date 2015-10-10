@@ -1,0 +1,15 @@
+xml加载顺序:
+web.xml
+	applicationContext.xml
+		dataSource.xml    spring-bean.xml
+			sqlmap-config.xml
+______________________________________________
+
+Controller由简入繁:
+AbstractControllerImpl
+UserController
+TeacherController
+StudentController
+______________________________________________
+
+index.html GET方式请求时在server.xml中添加 <Connector  URIEncoding="UTF-8"/>就会以UTF-8到后台

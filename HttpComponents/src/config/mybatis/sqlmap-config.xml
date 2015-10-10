@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE sqlMapConfig 
+PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN"
+ "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>  
+    <settings cacheModelsEnabled="true" enhancementEnabled="true"  
+        lazyLoadingEnabled="true" maxRequests="32" maxSessions="10"  
+        maxTransactions="5" useStatementNamespaces="true" />
+      <!-- 只有useStatementNamespaces为true的时候namespace才起作用 -->
+      
+  <!-- 别名定义 -->
+  <!--   <typeAlias alias="pageAccessURL"  type="com.lgm.mybatis.model.PageAccessURL" />   -->
+    
+   <!-- 映射文件，存放sql语句的配置文件 -->  
+   <sqlMap resource="com/bobo/code/model/User.xml"/>
+   <sqlMap resource="com/bobo/code/model/StudentMapper.xml"/>
+   <sqlMap resource="com/bobo/code/model/BankAccountMapper.xml"/>
+</sqlMapConfig>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="SupplierMapper.xml">
+	<typeAlias alias="SupplierBean" type="com.musik.ioffices.web.supplier.model.SupplierBean"/>
+	
+	<select id="getSupplierList"  resultClass="SupplierBean">
+		SELECT * FROM tbl_customer_supplier A 
+		<dynamic prepend = "where">
+  			<isNotEmpty property="number" prepend="and">
+  				A.NUMBER = #number:VARCHAR# 
+  			</isNotEmpty>
+			<isNotEmpty property="name" prepend="and">
+  				A.NAME = #name:VARCHAR#
+  			</isNotEmpty>
+  			<isNotEmpty property="linkman" prepend="and">
+  				A.LINKMAN = #linkman:VARCHAR#
+  			</isNotEmpty>
+		</dynamic>
+		ORDER BY A.UPDATETIME DESC limit #skipResult# ,#maxResult#
+	</select>
+	
+	<select id="getSupplierTotalSize"  resultClass="java.lang.Integer">
+		SELECT  count(*) acount FROM tbl_customer_supplier A 
+		<dynamic prepend = "where">
+  			<isNotEmpty property="number" prepend="and">
+  				A.NUMBER = #number:VARCHAR# 
+  			</isNotEmpty>
+			<isNotEmpty property="name" prepend="and">
+  				A.NAME = #name:VARCHAR#
+  			</isNotEmpty>
+  			<isNotEmpty property="linkman" prepend="and">
+  				A.LINKMAN = #linkman:VARCHAR#
+  			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<select id="getSupplierById" resultClass="SupplierBean">
+		select * from tbl_customer_supplier where id=#id#
+	</select>
+	
+	<select id="getMaxSupplierId" resultClass="java.lang.Integer">
+		select id from tbl_customer_supplier order by id desc limit 1
+	</select>
+	
+	<insert id="addSupplier" parameterClass="SupplierBean">
+		insert into tbl_customer_supplier (number,name,address,department,chief,linkman,updatetime)
+		values (#number:VARCHAR#,#name:VARCHAR#,#address:VARCHAR#,#department:VARCHAR#,#chief:VARCHAR#,#linkman:VARCHAR#,#updatetime:DATE#)
+	</insert>
+	
+	<delete id="deleteSupplierById">
+		delete from tbl_customer_supplier where id=#id#
+	</delete>
+	
+	<update id="updateSupplier" parameterClass="SupplierBean">
+    	update TBL_CUSTOMER_SUPPLIER
+	    <dynamic prepend="set" >
+	    	UPDATETIME = #updatetime:DATE#,
+	      <isNotEmpty prepend="," property="number" >
+	        NUMBER = #number:VARCHAR#
+	      </isNotEmpty>
+	      <isNotEmpty prepend="," property="name" >
+	        NAME = #name:VARCHAR#
+	      </isNotEmpty>
+	      <isNotEmpty prepend="," property="address" >
+	        ADDRESS = #address:VARCHAR#
+	      </isNotEmpty>
+	      <isNotEmpty prepend="," property="department" >
+	        DEPARTMENT = #department:VARCHAR#
+	      </isNotEmpty>
+	      <isNotEmpty prepend="," property="chief" >
+	        CHIEF = #chief:VARCHAR#
+	      </isNotEmpty>
+	      <isNotEmpty prepend="," property="linkman" >
+	        LINKMAN = #linkman:VARCHAR#
+	      </isNotEmpty>
+	    </dynamic>
+    	where ID = #id#
+  	</update>
+</sqlMap>

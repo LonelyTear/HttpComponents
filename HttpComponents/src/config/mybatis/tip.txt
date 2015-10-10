@@ -1,0 +1,74 @@
+给你一个简单的全配置
+显示student的增删改查
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN"
+"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap>
+<typeAlias alias="Student" type="com.accp.domain.Student" />
+
+<!--
+<resultMap id="userResult" class="model.user"> <result
+property="account" column="Account"/> <result property="password"
+column="Password"/> </resultMap> <select id="getUserByAccount"
+resultMap="userResult"> select * from Users where Account = #Value#
+</select> <select id="getUsers" resultMap="userResult"> select * from
+Users </select>
+-->
+<select id="findAll" resultClass="Student">
+
+select * from demo_student
+    
+    </select>
+    
+    <select id="findById" resultClass="Student" parameterClass="int">
+    	select * from demo_student where EVENT_ID = #EVENT_ID#
+    </select>
+    
+    <insert id="insert" parameterClass="Student">
+     insert into demo_student(EVENT_ID,name,age,address,birthDay,Classes_id) values(#id#,#name#,#age#,#address#,#birthDay#,#Classes_id#)
+    </insert>
+    
+    <delete id="delete" parameterClass="int">
+    	delete from demo_student where EVENT_ID = #id#
+    </delete>
+    
+    <update id="update" parameterClass="Student">
+    	update demo_student set name=#name# where EVENT_ID=#id#
+    </update>
+    
+    <select id="findByName" parameterClass="String" resultClass="Student">
+    	select * from demo_student where name like '%$name$%'
+    </select>
+    <!-- 通过返回主键然后添加Student(Oracle) -->
+    <insert id="insertBySequence" parameterClass="Student">
+    	<selectKey resultClass="int" keyProperty="id">
+    	 select StudentSequence.nextVal from dual;
+    	</selectKey>
+insert into demo_student(EVENT_ID,name,age,address,birthDay,Classes_id) values(#id#,#name#,#age#,#address#,#birthDay#,#Classes_id#)    	
+    </insert>
+</sqlMap>
+
+整体配置：
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMapConfig 
+    PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN" 
+    "http://www.ibatis.com/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+
+<properties resource="jdbc.properties" />
+
+<transactionManager type="JDBC">
+<dataSource type="SIMPLE">
+<property name="JDBC.Driver" value="${driverClass}" />
+<property name="JDBC.ConnectionURL" value="${jdbcUrl}" />
+<property name="JDBC.Username" value="${username}" />
+<property name="JDBC.Password" value="${password}" />
+</dataSource>
+</transactionManager>
+
+<sqlMap resource="Student.xml" />
+
+</sqlMapConfig> 

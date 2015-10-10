@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="student">
+	<typeAlias alias="Student" type="com.bobo.code.model.Student"/>
+	<!-- <include refid="selectDapermit" /> -->  <!-- 引用 -->
+	 <select id="select"  resultClass="Student">
+		SELECT * FROM tbl_student A 
+		<dynamic prepend = "where">
+			<isNotEmpty property="id" prepend="and">
+  				A.ID = #id:INTEGER#
+  			</isNotEmpty>
+			<isNotEmpty property="name" prepend="and">
+  				A.NAME like   CONCAT('%', #name:VARCHAR#, '%')
+  				<!-- [oracle] select  *  from table1 where name like '%' || #name# || '%' -->
+  			</isNotEmpty>
+  			<isNotEmpty property="address" prepend="and">
+  				A.ADDRESS = #address:VARCHAR#
+  			</isNotEmpty>
+  			<isNotEmpty property="tuition" prepend="and">
+  				A.TUITION = #tuition:DOUBLE#
+  			</isNotEmpty>
+  			<isNotEmpty property="birthDate" prepend="and">
+  				<![CDATA[ 
+                      A.BIRTHDATE >= #birthDate:DATE# 
+                ]]>
+  			</isNotEmpty>
+		</dynamic>
+		ORDER BY A.UPDATETIME DESC
+		<isNotEmpty property="skipResult" prepend="">
+			 limit #skipResult# ,#maxResult#
+  		</isNotEmpty>
+	</select>
+	
+	<select id="count"  resultClass="java.lang.Integer">
+		SELECT  count(*)  FROM tbl_student A 
+		<dynamic prepend = "where">
+			<isNotEmpty property="id" prepend="and">
+  				A.ID = #id:INTEGER#
+  			</isNotEmpty>
+  			<isNotEmpty property="name" prepend="and">
+  				A.NAME like   CONCAT('%', #name:VARCHAR#, '%')
+  				<!-- [oracle] select  *  from table1 where name like '%' || #name# || '%' -->
+  			</isNotEmpty>
+  			<isNotEmpty property="address" prepend="and">
+  				A.ADDRESS = #address:VARCHAR#
+  			</isNotEmpty>
+  			<isNotEmpty property="tuition" prepend="and">
+  				A.TUITION = #tuition:DOUBLE#
+  			</isNotEmpty>
+  			<isNotEmpty property="birthDate" prepend="and">
+  				<![CDATA[ 
+                      A.BIRTHDATE >= #birthDate:DATE# 
+                ]]>
+  			</isNotEmpty>
+		</dynamic>
+	</select>
+	
+	<!--
+	<select id="getStudentById" resultClass="Student">
+		select * from tbl_student where id=#id#
+	</select>
+	
+	<select id="getMaxStudentId" resultClass="java.lang.Integer">
+		select id from tbl_student order by id desc limit 1
+	</select> -->
+	
+	<insert id="insertStudent" parameterClass="Student">
+		<!-- <selectKey resultClass="int" keyProperty="id" > 
+			SELECT STOCKIDSEQUENCE.NEXTVAL AS ID FROM DUAL 
+		</selectKey> -->
+		<!-- 以上为oracle写法,如果都不写也是可以的,只是返回的时候为null,但建议还是写上,所说返回时用于级联很方便  -->
+		insert into tbl_student (name,address,tuition,birthdate)
+		values (#name:VARCHAR#,#address:VARCHAR#,#tuition:DOUBLE#,#birthDate:DATE#)
+		<!-- 以下为mysql写法,如果都不写也是可以的,只是返回的时候为null,但建议还是写上,所说返回时用于级联很方便   -->
+		<selectKey resultClass="int" keyProperty="id">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	
+	<delete id="delete" parameterClass="Student">
+		delete from tbl_student where id=#id#
+	</delete>
+	
+	<update id="updateStudent" parameterClass="Student">
+    	update tbl_student
+	    <dynamic prepend="set" >
+	      <isNotEmpty prepend="," property="name" >
+	        NAME = #name:VARCHAR#
+	      </isNotEmpty>
+	      <isNotEmpty prepend="," property="address" >
+	        ADDRESS = #address:VARCHAR#
+	      </isNotEmpty>
+	      <isNotEmpty prepend="," property="tuition" >
+	        TUITION = #tuition:DOUBLE#
+	      </isNotEmpty>
+	      <isNotEmpty prepend="," property="birthDate" >
+	        BIRTHDATE = #birthDate:DATE#
+	      </isNotEmpty>
+	    </dynamic>
+    	where ID = #id:INTEGER#
+  	</update>
+
+	<!-- 以id和name为key,value生成Map,未经测试 http://jun1986.iteye.com/blog/1404274 -->
+	<select id="selectMap" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		SELECT T.id AS "val" , T.name AS "key" FROM STUDENT  T
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend=" AND " property="birthDate">
+				T.birthDate=#birthDate:DATE#
+			</isNotEmpty>
+		</dynamic>
+		ORDER BY T.birthDate ASC
+	</select> 
+	
+</sqlMap>
